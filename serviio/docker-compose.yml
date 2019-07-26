@@ -1,0 +1,14 @@
+#sudo docker run --rm --name serviio --network=host -v /home/tiger/mediaservers/serviio/../content:/content -it serviio 
+version: '2'
+services:
+  serviio:
+    container_name: serviio
+    image: serviio
+    restart: always
+    network_mode: host
+    environment:
+      - TZ=Europe/Kiev
+    volumes:
+      - ./library:/serviio/library
+      - ./transcode:/transcode
+      - ../content:/content
