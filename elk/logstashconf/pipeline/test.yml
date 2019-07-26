@@ -1,0 +1,59 @@
+input {
+    udp {
+        port => 5000
+        type => syslog
+    }
+    udp {
+        port => 5001
+        type => erlang
+    }
+    udp {
+        port => 5002
+        type => nodejs
+    }
+}
+
+filter {
+    if [type] == "syslog" {
+        json {
+            source => "message"
+            target => "syslog"
+            remove_field=>["message"]
+        }
+    }
+    if [type] == "erlang" {
+        json {
+            source => "message"
+            target => "erlang"
+            remove_field=>["message"]
+        }
+    }
+    if [type] == "nodejs" {
+        json {
+            source => "message"
+            target => "nodejs"
+            remove_field=>["message"]
+        }
+    }
+}
+
+output {
+    if [type] == "syslog" {
+        elasticsearch {
+            hosts => ["elasticsearch:9200"]
+            index => "syslog-%{+YYYY.MM.dd}"
+        }
+    }
+    if [type] == "erlang" {
+        elasticsearch {
+            hosts => ["elasticsearch:9200"]
+            index => "erlang-%{+YYYY.MM.dd}"
+        }
+    }
+    if [type] == "nodejs" {
+        elasticsearch {
+            hosts => ["elasticsearch:9200"]
+            index => "nodejs-%{+YYYY.MM.dd}"
+        }
+    }
+}

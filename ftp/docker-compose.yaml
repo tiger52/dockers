@@ -1,0 +1,27 @@
+version: "3"
+services:
+ # pureftpd:
+ #   image: vimagick/pure-ftpd
+#    ports:
+#      - "21:21"
+ ##   volumes:
+ #     - ./data/ftpuser:/home/ftpuser
+ #     - ./data/pure-ftpd:/etc/pure-ftpd
+ #     - /data/www:/data/www:rw
+ #     - ./data/ssl:/etc/ssl/private 
+ #   privileged: true
+    #restart: always
+  vsftpd:
+    image: vsftpd
+    ports:
+      - "20:20"
+      - "21:21"
+      - "30000-30010:30000-30010"
+    volumes:
+      - ./vsftpd:/etc/vsftpd
+      - ./ftp:/var/lib/ftp
+      - ./pam.d/vsftpd:/etc/pam.d/vsftpd
+      - /data/www:/home/virtual/kiev:rw
+    privileged: true
+    restart: always
+

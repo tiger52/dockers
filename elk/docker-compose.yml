@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+
+  elasticsearch:
+    image: gitlab.favorit:4567/vessel/utility/elasticsearch
+    ports:
+      - 9200:9200
+    volumes:
+      - /home/tiger/docker/elk/elasticdata:/usr/share/elasticsearch/data:rw
+      - /home/tiger/docker/elk/elasticconf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
+
+  logstash:
+    image: gitlab.favorit:4567/vessel/utility/logstash
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5000:5000
+      - 5001:5001
+      - 5002:5002
+    volumes:
+      - /home/tiger/docker/elk/logstashconf/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - /home/tiger/docker/elk/logstashconf/pipeline/:/usr/share/logstash/pipeline/
+
+  kibana:
+    image: gitlab.favorit:4567/vessel/utility/kibana
+    depends_on:
+      - elasticsearch
+#    ports:
+#      - 5601:5601
+
+  frontend:
+    image: gitlab.favorit:4567/vessel/utility/nginx:alpine
+    depends_on:
+      - kibana
+    volumes:
+      - /home/tiger/docker/elk/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /home/tiger/docker/elk/nginx/htpasswd.users:/etc/nginx/htpasswd.users
+    ports:
+      - 80:80
+
+#  fakelog:
+#    image: fakelog
+#    depends_on:
+#      - kibana
+
+#  seedhost:
+#    image: gitlab.favorit:4567/vessel/seed:devel
+#    hostname: "seedhost.platforma"
+#    ports:
+#      - "40000:40000"
+#    environment:
+#      ERLCOOKIE: "pl-cokie"
+#      SEEDHOST: "seedhost.platforma"
+
